@@ -72,8 +72,7 @@ Install_zsh() {
 
 	printf "# key binding
 	bindkey '^[[A' history-substring-search-up
-	bindkey '^[[B' history-substring-search-down
-	bindkey ',' autosuggest-accept\n\n" >> ~/.zshrc
+	bindkey '^[[B' history-substring-search-down\n\n" >> ~/.zshrc
 
 	printf "# Powerlevel10k
 	zinit ice depth=1; zinit light romkatv/powerlevel10k\n\n" >> ~/.zshrc
