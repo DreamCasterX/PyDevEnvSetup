@@ -10,7 +10,7 @@ __version__="0.1"
 
 CheckNetwork() {
 	wget -q --spider www.google.com > /dev/null
-	[[ $? != 0 ]] && echo -e "❌ No Internet connection! Check your network and retry.\n" && exit || :
+	[[ $? != 0 ]] && echo -e "❌ 無網路連線! 請檢查並重試\n" && exit || :
 }
 
 # 檢查程式最新版本
@@ -21,7 +21,7 @@ UpdateScript() {
 	tarball_url="https://github.com/DreamCasterX/PyDevEnvSetup/archive/refs/tags/${new_version}.tar.gz"
 	if [[ $new_version != $__version__ ]]
 	then
-		echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
+		echo -e "⭐️ 發現新版本!\n\nVersion: $new_version\nRelease note:\n$release_note"
 		sleep 2
 		echo -e "\nDownloading update..."
 		pushd "$PWD" > /dev/null 2>&1
@@ -89,7 +89,7 @@ Install_zsh() {
 	zsh
 	chsh -s $(which zsh)
 	source ~/.zshrc
-	# 手動設定powerlevel10k 或執行"p10k configure"
+	# 手動設定powerlevel10k或執行"p10k configure"
 }
 
 Install_pyenv() {	
@@ -118,6 +118,7 @@ Install_poetry() {
 	echo
 	curl -sSL https://install.python-poetry.org | python3 -
 	poetry config virtualenvs.in-project true
+	# 移至建立專案目錄執行"poetry init"
 }
 
 Install_docker() {	
@@ -150,10 +151,10 @@ Install_docker() {
 
 
 echo -e "  \n安裝zsh [1]   安裝pyenv [2]   安裝poetry [3]   安裝docker [4]   更新程式 [U]   離開 [Q]\n"
-read -p "Select an action: " ACTION
+read -p "輸入選項: " ACTION
 while [[ $ACTION != [1234UuQq] ]]
 do
-	echo -e "Invalid input!"
+	echo -e "選項錯誤!"
 	read -p "Select an action: " ACTION
 done
 [[ $ACTION == '1' ]] && Install_zsh ; [[ $ACTION == '2' ]] && Install_pyenv ; [[ $ACTION == '3' ]] && Install_poetry ; [[ $ACTION == '4' ]] && Install_docker ; [[ $ACTION == [Uu] ]] && UpdateScript ; [[ $ACTION == [Qq] ]] && exit
