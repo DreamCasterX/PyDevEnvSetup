@@ -156,6 +156,6 @@ read -p "輸入選項: " ACTION
 while [[ $ACTION != [1234UuQq] ]]
 do
 	echo -e "選項錯誤!"
-	read -p "Select an action: " ACTION
+	read -p "輸入選項: " ACTION
 done
 [[ $ACTION == '1' ]] && Install_zsh ; [[ $ACTION == '2' ]] && Install_pyenv ; [[ $ACTION == '3' ]] && Install_poetry ; [[ $ACTION == '4' ]] && Install_docker ; [[ $ACTION == [Uu] ]] && UpdateScript ; [[ $ACTION == [Qq] ]] && exit
