@@ -101,7 +101,7 @@ Install_pyenv() {
 	echo
 	sudo apt update && sudo apt install -y --no-install-recommends make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev git
 	git clone https://github.com/pyenv/pyenv.git ~/.pyenv
- 	CUR_PY_VER=`python3 -V`
+ 	CUR_PY_VER=`python3 -V | awk '{print $NF}'`
  	echo -e "\n當前使用中的Python版本: $CUR_PY_VER"
 	read -p "輸入要安裝的Python版本(ex: 3.11.9): " NEW_PY_VER
 	pyenv install $NEW_PY_VER
@@ -116,6 +116,8 @@ Install_poetry() {
 	echo "│                                       │"
 	echo "╰───────────────────────────────────────╯"
 	echo
+	CUR_PY_VER=`python3 -V | awk '{print $NF}' | awk '{split($0, parts, "."); print parts[1] "." parts[2]}'`
+	[[ `sudo dpkg -l | grep python$CUR_PY_VER-venv` ]] || sudo apt update && sudo apt install python$CUR_PY_VER-venv -y
 	curl -sSL https://install.python-poetry.org | python3 -
 	poetry config virtualenvs.in-project true
 	# 移至建立專案目錄執行"poetry init"
