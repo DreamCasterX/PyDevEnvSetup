@@ -2,7 +2,7 @@
 
 # CREATOR: mike.lu@hp.com
 # CHANGE DATE: 05/16/2024
-__version__="0.1"
+__version__="1.0"
 
 
 # Python開發環境自動安裝程式
@@ -28,16 +28,18 @@ UpdateScript() {
 		curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".PyDevEnvSetup.tar.gz" "${tarball_url}"
 		if [[ -e ".PyDevEnvSetup.tar.gz" ]]
 		then
-		tar -xf .PyDevEnvSetup.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
-		rm -f .PyDevEnvSetup.tar.gz
-		rm -f README.md
-		popd > /dev/null 2>&1
-		sleep 3
-		chmod 777 PyDevEnvSetup.sh
-		echo -e "更新完成! 請重新執行\n\n" ; exit 1
+			tar -xf .PyDevEnvSetup.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
+			rm -f .PyDevEnvSetup.tar.gz
+			rm -f README.md
+			popd > /dev/null 2>&1
+			sleep 3
+			chmod 755 PyDevEnvSetup.sh
+			echo -e "更新完成! 請重新執行\n\n" ; exit 1
 		else
-		echo -e "\n❌ 更新失敗" ; exit 1
-		fi 
+			echo -e "\n❌ 更新失敗" ; exit 1
+		fi
+	else
+		echo -e "✅ 已是最新版本\n"
 	fi
 }
 
