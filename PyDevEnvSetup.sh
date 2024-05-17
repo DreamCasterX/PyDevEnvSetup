@@ -147,9 +147,9 @@ Install_docker() {
 	sudo apt update
 	sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 	sudo docker run hello-world
-
-	# 完成安裝後(似乎會失敗)
-	sudo usermod -aG docker $USER
+	# 讓docker不需要加sudo就能執行
+	sudo usermod -aG docker $USER # 可能非必要 待驗證
+	sudo chmod 777 /var/run/docker.sock
 }
 
 
