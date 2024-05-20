@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 05/16/2024
-__version__="1.0"
+# CHANGE DATE: 05/20/2024
+__version__="1.1"
 
 
 # Python開發環境自動安裝程式
@@ -93,6 +93,25 @@ Install_zsh() {
 	# 手動設定powerlevel10k或執行"p10k configure"
 }
 
+Install_fastfetch() {	
+	echo
+	echo "╭───────────────────────────────────────╮"
+	echo "│             安裝fastfetch             |"
+	echo "│                                       │"
+	echo "╰───────────────────────────────────────╯"
+	echo
+	sudo apt update && sudo apt install lolcat -y  # 安裝lolcat
+	release_url=https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest
+	new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+	deb_url="https://github.com/fastfetch-cli/fastfetch/releases/download/$new_version/fastfetch-linux-amd64.deb"
+	curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".fastfetch.deb" "${deb_url}"
+	sudo dpkg -i .fastfetch.deb && rm -f .fastfetch.deb && fastfetch --gen-config-force
+	sed -i 's/POWERLEVEL9K_INSTANT_PROMPT=verbose/POWERLEVEL9K_INSTANT_PROMPT=off/' ~/.p10k.zsh 2> /dev/null  # p10k必須要在裝完zsh後就設定好
+	sed -i '/packages\|wm\|wmtheme\|theme\|icons\|font\|cursor\|terminal\|terminalfont\|swap\|locale\|colors/d' ~/.config/fastfetch/config.jsonc
+	[[ ! `grep '啟用fastfetch' ~/.zshrc` ]] && sed -i '4s/^/\n\n# 啟用fastfetch\n    fastfetch --logo none | lolcat\n\n/' ~/.zshrc
+	# 手動更改設定~/.config/fastfetch/config.jsonc
+}
+
 Install_pyenv() {	
 	echo
 	echo "╭───────────────────────────────────────╮"
@@ -113,7 +132,7 @@ Install_pyenv() {
 Install_poetry() {	
 	echo
 	echo "╭───────────────────────────────────────╮"
-	echo "│             安裝poetry                |"
+	echo "│             安裝Poetry                |"
 	echo "│                                       │"
 	echo "╰───────────────────────────────────────╯"
 	echo
@@ -127,7 +146,7 @@ Install_poetry() {
 Install_docker() {	
 	echo
 	echo "╭───────────────────────────────────────╮"
-	echo "│             安裝docker                |"
+	echo "│             安裝Docker                |"
 	echo "│                                       │"
 	echo "╰───────────────────────────────────────╯"
 	echo
@@ -147,17 +166,17 @@ Install_docker() {
 	sudo apt update
 	sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 	sudo docker run hello-world
-	# 讓docker不需要加sudo就能執行
-	sudo usermod -aG docker $USER # 可能非必要 待驗證
-	sudo chmod 777 /var/run/docker.sock
+	sudo usermod -aG docker $USER && sudo chmod a+rw /var/run/docker.sock
 }
 
 
-echo -e "  \n安裝zsh [1]   安裝pyenv [2]   安裝poetry [3]   安裝docker [4]   更新程式 [U]   離開 [Q]\n"
+echo -e "  \n安裝zsh [1]   安裝fastfetch [2]   安裝pyenv [3]   安裝poetry [4]   安裝docker [5]   更新程式 [U]   離開 [Q]\n"
 read -p "輸入選項: " ACTION
-while [[ $ACTION != [1234UuQq] ]]
+while [[ $ACTION != [12345UuQq] ]]
 do
 	echo -e "選項錯誤!"
 	read -p "輸入選項: " ACTION
 done
-[[ $ACTION == '1' ]] && Install_zsh ; [[ $ACTION == '2' ]] && Install_pyenv ; [[ $ACTION == '3' ]] && Install_poetry ; [[ $ACTION == '4' ]] && Install_docker ; [[ $ACTION == [Uu] ]] && UpdateScript ; [[ $ACTION == [Qq] ]] && exit
+[[ $ACTION == '1' ]] && CheckNetwork && Install_zsh ; [[ $ACTION == '2' ]] && CheckNetwork && Install_fastfetch ; [[ $ACTION == '3' ]] && CheckNetwork && Install_pyenv ; 
+[[ $ACTION == '4' ]] && CheckNetwork && Install_poetry ; [[ $ACTION == '5' ]] && CheckNetwork && Install_docker ; 
+[[ $ACTION == [Uu] ]] && CheckNetwork && UpdateScript ; [[ $ACTION == [Qq] ]] && exit
