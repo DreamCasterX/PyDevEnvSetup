@@ -21,9 +21,9 @@ UpdateScript() {
 	tarball_url="https://github.com/DreamCasterX/PyDevEnvSetup/archive/refs/tags/${new_version}.tar.gz"
 	if [[ $new_version != $__version__ ]]
 	then
-		echo -e "⭐️ 發現新版本!\n\nVersion: $new_version\nRelease note:\n$release_note"
+		echo -e "⭐️ 發現新版本!\n\n版本: $new_version\n發行說明:\n$release_note"
 		sleep 2
-		echo -e "\nDownloading update..."
+		echo -e "\n下載並安裝更新..."
 		pushd "$PWD" > /dev/null 2>&1
 		curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".PyDevEnvSetup.tar.gz" "${tarball_url}"
 		if [[ -e ".PyDevEnvSetup.tar.gz" ]]
