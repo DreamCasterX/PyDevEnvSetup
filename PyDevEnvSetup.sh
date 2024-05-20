@@ -106,8 +106,9 @@ Install_fastfetch() {
 	deb_url="https://github.com/fastfetch-cli/fastfetch/releases/download/$new_version/fastfetch-linux-amd64.deb"
 	curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".fastfetch.deb" "${deb_url}"
 	sudo dpkg -i .fastfetch.deb && rm -f .fastfetch.deb && fastfetch --gen-config-force
-	sed -i 's/POWERLEVEL9K_INSTANT_PROMPT=verbose/POWERLEVEL9K_INSTANT_PROMPT=off/' ~/.p10k.zsh 2> /dev/null  # p10k必須要在裝完zsh後就設定好
-	sed -i '/packages\|wm\|wmtheme\|theme\|icons\|font\|cursor\|terminal\|terminalfont\|swap\|locale\|colors/d' ~/.config/fastfetch/config.jsonc
+	[[ -f ~/.p10k.zsh ]] && sed -i 's/POWERLEVEL9K_INSTANT_PROMPT=verbose/POWERLEVEL9K_INSTANT_PROMPT=off/' ~/.p10k.zsh 2> /dev/null  # p10k必須要在裝完zsh後就設定好
+	sed -i '/uptime\|packages\|shell\|wmtheme\|theme\|icons\|font\|cursor\|terminal\|terminalfont\|swap\|locale\|colors/d' ~/.config/fastfetch/config.jsonc # Remove unwanted modules
+	sed -i '8i\    {\n      "type": "command",\n      "text": "cat /sys/class/dmi/id/bios_version",\n      "key": "Bios"\n    },\n' ~/.config/fastfetch/config.jsonc # Display BIOS info
 	[[ ! `grep '啟用fastfetch' ~/.zshrc` ]] && sed -i '4s/^/\n\n# 啟用fastfetch\n    fastfetch --logo none | lolcat\n\n/' ~/.zshrc
 	# 手動更改設定~/.config/fastfetch/config.jsonc
 }
