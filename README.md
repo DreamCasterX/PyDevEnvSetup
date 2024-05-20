@@ -1,6 +1,7 @@
 # Python開發環境自動安裝程式
 一鍵安裝
 - zsh/zinit/Powerlevel10k
+- fastfetch
 - Pyenv
 - Poetry
 - Docker
