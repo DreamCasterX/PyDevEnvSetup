@@ -33,7 +33,7 @@ UpdateScript() {
 			rm -f README.md
 			popd > /dev/null 2>&1
 			sleep 3
-			chmod 755 PyDevEnvSetup.sh
+			sudo chmod 755 PyDevEnvSetup.sh
 			echo -e "更新完成! 請重新執行\n\n" ; exit 1
 		else
 			echo -e "\n❌ 更新失敗" ; exit 1
