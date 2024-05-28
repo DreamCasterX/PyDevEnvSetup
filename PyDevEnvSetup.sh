@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 05/20/2024
-__version__="1.1"
+# CHANGE DATE: 05/28/2024
+__version__="1.2"
 
 
 # Python開發環境自動安裝程式
@@ -101,15 +101,32 @@ Install_fastfetch() {
 	echo "╰───────────────────────────────────────╯"
 	echo
 	sudo apt update && sudo apt install lolcat -y  # 安裝lolcat
-	release_url=https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest
-	new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
-	deb_url="https://github.com/fastfetch-cli/fastfetch/releases/download/$new_version/fastfetch-linux-amd64.deb"
-	curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".fastfetch.deb" "${deb_url}"
-	sudo dpkg -i .fastfetch.deb && rm -f .fastfetch.deb && fastfetch --gen-config-force
+	# Download fastfetch
+	fastfetch_release_url=https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest
+	fastfetch_new_version=$(curl -s "${fastfetch_release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+	fastfetch_deb_url="https://github.com/fastfetch-cli/fastfetch/releases/download/$fastfetch_new_version/fastfetch-linux-amd64.deb"
+	curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".fastfetch.deb" "${fastfetch_deb_url}"
+	if [[ -e ".fastfetch.deb" ]]; then
+		sudo dpkg -i .fastfetch.deb && rm -f .fastfetch.deb && fastfetch --gen-config-force
+	else
+		echo -e "\n\e[31m下載主程式失敗.\e[0m" ; exit 1
+	fi
+	# Download customized config file
+	config_release_url=https://api.github.com/repos/DreamCasterX/SysInfo/releases/latest
+	config_new_version=$(curl -s "${config_release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+	config_tarball_url="https://github.com/DreamCasterX/SysInfo/archive/refs/tags/${config_new_version}.tar.gz"
+	curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".SysInfo.tar.gz" "${config_tarball_url}"
+	if [[ -e ".SysInfo.tar.gz" ]]; then
+		tar -xf .SysInfo.tar.gz -C "$PWD" --strip-components 1 SysInfo-$config_new_version/config.jsonc > /dev/null 2>&1
+		rm -f .SysInfo.tar.gz
+		popd > /dev/null 2>&1
+		sleep 3
+		sudo chmod 755 config.jsonc
+		mv config.jsonc ~/.config/fastfetch/	
+	else
+		echo -e "\n\e[31m下載設定檔失敗.\e[0m" ; exit 1
+	fi
 	[[ -f ~/.p10k.zsh ]] && sed -i 's/POWERLEVEL9K_INSTANT_PROMPT=verbose/POWERLEVEL9K_INSTANT_PROMPT=off/' ~/.p10k.zsh 2> /dev/null  # p10k必須要在裝完zsh後就設定好
-	sed -i '/uptime\|packages\|shell\|wmtheme\|theme\|icons\|font\|cursor\|terminal\|terminalfont\|swap\|locale\|colors/d' ~/.config/fastfetch/config.jsonc # Remove unwanted modules
-	sed -i '8i\    {\n      "type": "command",\n      "text": "cat /sys/class/dmi/id/bios_version",\n      "key": "Bios"\n    },' ~/.config/fastfetch/config.jsonc # Display BIOS info
-	sed -i '25i\    "uptime",' ~/.config/fastfetch/config.jsonc # Display uptime
 	[[ ! `grep '啟用fastfetch' ~/.zshrc` ]] && sed -i '4s/^/\n\n# 啟用fastfetch\n    fastfetch --logo none | lolcat\n\n/' ~/.zshrc
 	# 手動更改設定~/.config/fastfetch/config.jsonc
 }
