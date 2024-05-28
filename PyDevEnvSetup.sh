@@ -100,6 +100,7 @@ Install_fastfetch() {
 	echo "│                                       │"
 	echo "╰───────────────────────────────────────╯"
 	echo
+	[[ -f ~/.p10k.zsh ]] && sed -i 's/POWERLEVEL9K_INSTANT_PROMPT=verbose/POWERLEVEL9K_INSTANT_PROMPT=off/' ~/.p10k.zsh 2> /dev/null  # p10k必須要在裝完zsh後就設定好
 	sudo apt update && sudo apt install lolcat -y  # 安裝lolcat
 	# Download fastfetch
 	fastfetch_release_url=https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest
@@ -107,7 +108,7 @@ Install_fastfetch() {
 	fastfetch_deb_url="https://github.com/fastfetch-cli/fastfetch/releases/download/$fastfetch_new_version/fastfetch-linux-amd64.deb"
 	curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".fastfetch.deb" "${fastfetch_deb_url}"
 	if [[ -e ".fastfetch.deb" ]]; then
-		sudo dpkg -i .fastfetch.deb && rm -f .fastfetch.deb && fastfetch --gen-config-force
+		sudo dpkg -i .fastfetch.deb && rm -f .fastfetch.deb && fastfetch --gen-config-force > /dev/null 2>&1
 	else
 		echo -e "\n\e[31m下載主程式失敗.\e[0m" ; exit 1
 	fi
@@ -126,9 +127,9 @@ Install_fastfetch() {
 	else
 		echo -e "\n\e[31m下載設定檔失敗.\e[0m" ; exit 1
 	fi
-	[[ -f ~/.p10k.zsh ]] && sed -i 's/POWERLEVEL9K_INSTANT_PROMPT=verbose/POWERLEVEL9K_INSTANT_PROMPT=off/' ~/.p10k.zsh 2> /dev/null  # p10k必須要在裝完zsh後就設定好
 	[[ ! `grep '啟用fastfetch' ~/.zshrc` ]] && sed -i '4s/^/\n\n# 啟用fastfetch\n    fastfetch --logo none | lolcat\n\n/' ~/.zshrc
-	# 手動更改設定~/.config/fastfetch/config.jsonc
+	echo -e "\n\e[32m完成! 開啟一個新終端機檢視\e[0m\n"
+	# 手動修改設定~/.config/fastfetch/config.jsonc
 }
 
 Install_pyenv() {	
@@ -145,6 +146,7 @@ Install_pyenv() {
 	read -p "輸入要安裝的Python版本(ex: 3.11.9): " NEW_PY_VER
 	pyenv install $NEW_PY_VER
 	pyenv global $NEW_PY_VER
+	echo -e "\e[32mDone!\e[0m"
  	source ~/.zshrc
 }
 
