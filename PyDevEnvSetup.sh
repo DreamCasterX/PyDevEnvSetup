@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 05/28/2024
+# CHANGE DATE: 06/26/2024
 __version__="1.2"
 
 
@@ -15,6 +15,7 @@ CheckNetwork() {
 
 # 檢查程式最新版本
 UpdateScript() {
+	[[ ! -f /usr/bin/curl ]] && sudo apt update && sudo apt install curl -y
 	release_url=https://api.github.com/repos/DreamCasterX/PyDevEnvSetup/releases/latest
 	new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
 	release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
