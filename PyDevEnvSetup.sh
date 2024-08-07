@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 06/26/2024
+# CHANGE DATE: 08/07/2024
 __version__="1.2"
 
 
@@ -15,10 +15,9 @@ CheckNetwork() {
 
 # 檢查程式最新版本
 UpdateScript() {
-	[[ ! -f /usr/bin/curl ]] && sudo apt update && sudo apt install curl -y
 	release_url=https://api.github.com/repos/DreamCasterX/PyDevEnvSetup/releases/latest
-	new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
-	release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
+	new_version=$(wget -qO- "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+	release_note=$(wget -qO- "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
 	tarball_url="https://github.com/DreamCasterX/PyDevEnvSetup/archive/refs/tags/${new_version}.tar.gz"
 	if [[ $new_version != $__version__ ]]
 	then
@@ -26,7 +25,7 @@ UpdateScript() {
 		sleep 2
 		echo -e "\n下載並安裝更新..."
 		pushd "$PWD" > /dev/null 2>&1
-		curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".PyDevEnvSetup.tar.gz" "${tarball_url}"
+		wget --quiet --no-check-certificate --tries=3 --waitretry=2 --output-document=".PyDevEnvSetup.tar.gz" "${tarball_url}"
 		if [[ -e ".PyDevEnvSetup.tar.gz" ]]
 		then
 			tar -xf .PyDevEnvSetup.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
@@ -105,9 +104,9 @@ Install_fastfetch() {
 	sudo apt update && sudo apt install lolcat -y  # 安裝lolcat
 	# Download fastfetch
 	fastfetch_release_url=https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest
-	fastfetch_new_version=$(curl -s "${fastfetch_release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+	fastfetch_new_version=$(wget -qO- "${fastfetch_release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
 	fastfetch_deb_url="https://github.com/fastfetch-cli/fastfetch/releases/download/$fastfetch_new_version/fastfetch-linux-amd64.deb"
-	curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".fastfetch.deb" "${fastfetch_deb_url}"
+	wget --quiet --no-check-certificate --tries=3 --waitretry=2 --output-document=".fastfetch.deb" "${fastfetch_deb_url}"
 	if [[ -e ".fastfetch.deb" ]]; then
 		sudo dpkg -i .fastfetch.deb && rm -f .fastfetch.deb && fastfetch --gen-config-force > /dev/null 2>&1
 	else
@@ -115,9 +114,9 @@ Install_fastfetch() {
 	fi
 	# Download customized config file
 	config_release_url=https://api.github.com/repos/DreamCasterX/SysInfo/releases/latest
-	config_new_version=$(curl -s "${config_release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+	config_new_version=$(wget -qO- "${config_release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
 	config_tarball_url="https://github.com/DreamCasterX/SysInfo/archive/refs/tags/${config_new_version}.tar.gz"
-	curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".SysInfo.tar.gz" "${config_tarball_url}"
+	wget --quiet --no-check-certificate --tries=3 --waitretry=2 --output-document=".SysInfo.tar.gz" "${config_tarball_url}"
 	if [[ -e ".SysInfo.tar.gz" ]]; then
 		tar -xf .SysInfo.tar.gz -C "$PWD" --strip-components 1 SysInfo-$config_new_version/config.jsonc > /dev/null 2>&1
 		rm -f .SysInfo.tar.gz
@@ -159,7 +158,7 @@ Install_poetry() {
 	echo "╰───────────────────────────────────────╯"
 	echo
 	CUR_PY_VER=`python3 -V | awk '{print $NF}' | awk '{split($0, parts, "."); print parts[1] "." parts[2]}'`
-	[[ `sudo dpkg -l | grep python$CUR_PY_VER-venv` ]] || sudo apt update && sudo apt install python$CUR_PY_VER-venv -y
+	[[ `sudo dpkg -l | grep python$CUR_PY_VER-venv` ]] || sudo apt update && sudo apt install curl python$CUR_PY_VER-venv -y
 	curl -sSL https://install.python-poetry.org | python3 -
 	poetry config virtualenvs.in-project true
 	# 移至建立專案目錄執行"poetry init"
