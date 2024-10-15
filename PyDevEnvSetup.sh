@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+# _*_ coding: UTF-8 _*_
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 08/07/2024
+# CHANGE DATE: 10/15/2024
 __version__="1.2"
 
 
@@ -86,7 +87,7 @@ Install_zsh() {
 
 	printf '# Poetry 環境變數設置
 	export PATH=$PATH:$HOME/.local/bin\n\n' >> ~/.zshrc
-
+    echo "請重新登入系統以完成設置"
     zsh
     chsh -s $(which zsh)
     source ~/.zshrc
